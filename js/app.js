@@ -45,10 +45,51 @@ function getCategoryMeta(name) {
   };
 }
 
+/**
+ * Get current year and month formatted as YYYY-MM.
+ * Uses Vietnam timezone (Asia/Ho_Chi_Minh, UTC+7) so currentMonth is always 100% accurate
+ * regardless of the device's physical location or UTC offset.
+ */
+function getCurrentYearMonth(d = new Date()) {
+  try {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Ho_Chi_Minh',
+      year: 'numeric',
+      month: '2-digit'
+    }).format(d);
+  } catch (e) {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    return `${year}-${month}`;
+  }
+}
+
+/**
+ * Get current date formatted as YYYY-MM-DD.
+ * Formatted strictly in Vietnam timezone (Asia/Ho_Chi_Minh, UTC+7).
+ * Prevents the notorious new Date().toISOString() bug where times between
+ * 00:00 and 06:59 AM in Vietnam yield yesterday's UTC date.
+ */
+function getLocalDateString(d = new Date()) {
+  try {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Ho_Chi_Minh',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(d);
+  } catch (e) {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+}
+
 // --- Application State ---
 const state = {
   transactions: [],
-  currentMonth: '2026-10', // YYYY-MM
+  currentMonth: getCurrentYearMonth(), // Tự động lấy tháng và năm hiện tại theo thời gian thực (F01)
   filterType: 'all',       // 'all' | 'income' | 'expense'
   filterCategory: 'all',   // 'all' | category name
   searchQuery: '',
@@ -63,7 +104,8 @@ const state = {
 const STORAGE_KEYS = {
   TRANSACTIONS: 'moneynote_transactions_v1',
   BUDGETS: 'moneynote_budgets_v1',
-  THEME: 'moneynote_theme_v1'
+  THEME: 'moneynote_theme_v1',
+  INITIALIZED: 'moneynote_initialized_v1' // Flag to prevent deleted data from coming back
 };
 
 // --- Seed Data (F06, ~10 realistic transactions as in mockup) ---
@@ -216,21 +258,30 @@ function formatDateVN(dateStr) {
 }
 
 /**
- * Get days remaining in the month for budget warning
+ * Get days remaining in the month for budget warning.
+ * Calculated strictly in Vietnam timezone (Asia/Ho_Chi_Minh).
  */
 function getDaysRemainingInMonth(yearMonthStr) {
   const [year, month] = yearMonthStr.split('-').map(Number);
-  const now = new Date();
+  
+  // Extract today's date in Vietnam timezone
+  const vnDateStr = getLocalDateString();
+  const [currentYear, currentMonth, currentDay] = vnDateStr.split('-').map(Number);
   
   // If target month is current real month
-  if (now.getFullYear() === year && now.getMonth() + 1 === month) {
+  if (currentYear === year && currentMonth === month) {
     const lastDay = new Date(year, month, 0).getDate();
-    const currentDay = now.getDate();
     return Math.max(0, lastDay - currentDay);
   }
   
-  // For other months (e.g. demo month 10/2026), simulate end of month (e.g. 3 days remaining)
-  return 3;
+  // If target month is in the past
+  if (year < currentYear || (year === currentYear && month < currentMonth)) {
+    return 0;
+  }
+  
+  // If target month is in the future
+  const lastDay = new Date(year, month, 0).getDate();
+  return lastDay;
 }
 
 /**
@@ -265,22 +316,28 @@ function formatNumberInput(num) {
 
 function loadStateFromStorage() {
   try {
+    const isInitialized = localStorage.getItem(STORAGE_KEYS.INITIALIZED);
     const rawTx = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
-    if (rawTx) {
-      state.transactions = JSON.parse(rawTx);
-    } else {
-      // First time opening app: seed with initial sample transactions
+
+    if (rawTx !== null) {
+      // User has existing data saved (even if it's empty [] because they deleted all)
+      state.transactions = JSON.parse(rawTx) || [];
+    } else if (!isInitialized) {
+      // First time user ever opens the app: seed with initial sample transactions
       state.transactions = getSampleTransactions(state.currentMonth);
+      localStorage.setItem(STORAGE_KEYS.INITIALIZED, 'true');
       saveTransactionsToStorage();
+    } else {
+      // App was initialized before, but transactions were cleared
+      state.transactions = [];
     }
 
     const rawBudgets = localStorage.getItem(STORAGE_KEYS.BUDGETS);
-    if (rawBudgets) {
-      state.budgets = JSON.parse(rawBudgets);
+    if (rawBudgets !== null) {
+      state.budgets = JSON.parse(rawBudgets) || {};
     } else {
-      // Default monthly budget
+      // Default monthly budget for current month
       state.budgets = {
-        '2026-10': 6000000,
         [getCurrentYearMonth()]: 6000000
       };
       saveBudgetsToStorage();
@@ -296,18 +353,40 @@ function loadStateFromStorage() {
     }
   } catch (err) {
     console.error('Error loading state from localStorage:', err);
-    state.transactions = getSampleTransactions(state.currentMonth);
-    state.budgets = { '2026-10': 6000000 };
+    state.transactions = [];
+    state.budgets = { [getCurrentYearMonth()]: 6000000 };
   }
 }
 
 function saveTransactionsToStorage() {
   try {
+    localStorage.setItem(STORAGE_KEYS.INITIALIZED, 'true');
     localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(state.transactions));
   } catch (err) {
     console.error('Error saving transactions to localStorage:', err);
     showToast('Lỗi lưu dữ liệu trình duyệt!', 'error');
   }
+}
+
+/**
+ * Core Data Operation: Delete a single transaction by ID (F05)
+ * Removes item from state array, syncs with LocalStorage, ensures consistency.
+ */
+function deleteSingleTransaction(id) {
+  state.transactions = state.transactions.filter(t => t.id !== id);
+  saveTransactionsToStorage();
+}
+
+/**
+ * Core Data Operation: Delete all transactions (F05 / Settings)
+ * Clears transactions array in state, syncs with LocalStorage, ensures consistency.
+ * Retains INITIALIZED flag so sample data will never reappear upon page reload.
+ */
+function deleteAllTransactions() {
+  state.transactions = [];
+  state.budgets = {};
+  saveTransactionsToStorage();
+  saveBudgetsToStorage();
 }
 
 function saveBudgetsToStorage() {
@@ -324,13 +403,6 @@ function saveThemeToStorage() {
   } catch (err) {
     console.error('Error saving theme to localStorage:', err);
   }
-}
-
-function getCurrentYearMonth() {
-  const d = new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  return `${year}-${month}`;
 }
 
 // --- Toast Notifications ---
@@ -483,8 +555,8 @@ function getFilteredTransactions() {
 
     return true;
   }).sort((a, b) => {
-    // Sort newest first by date, then by creation timestamp
-    const dateCmp = new Date(b.date) - new Date(a.date);
+    // Sort newest first by date (lexicographical comparison on YYYY-MM-DD avoids timezone parsing shifts)
+    const dateCmp = b.date.localeCompare(a.date);
     if (dateCmp !== 0) return dateCmp;
     return (b.createdAt || 0) - (a.createdAt || 0);
   });
@@ -619,13 +691,21 @@ function renderBudgetSection() {
     if (fillEl) fillEl.classList.add('warning');
     if (bannerEl) {
       bannerEl.classList.add('warning');
-      alertTextEl.textContent = `Bạn đã dùng ${percentUsed}% ngân sách. Còn lại ${formatVND(remaining)} cho ${daysRemaining} ngày cuối tháng.`;
+      if (daysRemaining > 0) {
+        alertTextEl.textContent = `Bạn đã dùng ${percentUsed}% ngân sách. Còn lại ${formatVND(remaining)} cho ${daysRemaining} ngày cuối tháng.`;
+      } else {
+        alertTextEl.textContent = `Bạn đã dùng ${percentUsed}% ngân sách trong tháng này. Còn dư ${formatVND(remaining)}.`;
+      }
     }
   } else {
     // Safe (<80%)
     if (bannerEl) {
       bannerEl.classList.add('safe');
-      alertTextEl.textContent = `Tiến độ chi tiêu tốt (${percentUsed}% ngân sách). Bạn còn lại ${formatVND(remaining)} cho tháng này.`;
+      if (daysRemaining > 0) {
+        alertTextEl.textContent = `Tiến độ chi tiêu tốt (${percentUsed}% ngân sách). Bạn còn lại ${formatVND(remaining)} cho ${daysRemaining} ngày cuối tháng.`;
+      } else {
+        alertTextEl.textContent = `Tiến độ chi tiêu tốt (${percentUsed}% ngân sách). Tổng kết còn dư ${formatVND(remaining)}.`;
+      }
     }
   }
 
@@ -912,11 +992,11 @@ function openTransactionModal(editId = null) {
     elements.txFormId.value = '';
     elements.formAmountInput.value = '';
     
-    // Default to today if currentMonth is real month, else demo date
-    const todayStr = new Date().toISOString().split('T')[0];
+    // Default to today in user's local timezone (immune to UTC offset shifts in UTC+7)
+    const todayStr = getLocalDateString();
     elements.formDateInput.value = todayStr.startsWith(state.currentMonth) 
       ? todayStr 
-      : `${state.currentMonth}-15`;
+      : `${state.currentMonth}-01`;
 
     elements.formPaymentSelect.value = 'Tiền mặt';
     elements.formNoteInput.value = '';
@@ -1065,8 +1145,7 @@ function handleFormSubmit(e) {
 function handleConfirmDelete() {
   if (!state.deletingTxId) return;
 
-  state.transactions = state.transactions.filter(t => t.id !== state.deletingTxId);
-  saveTransactionsToStorage();
+  deleteSingleTransaction(state.deletingTxId);
   closeDeleteModal();
   renderCategoryFilterDropdown();
   renderApp();
@@ -1340,6 +1419,7 @@ function setupEventListeners() {
   // 18. Settings Modal Actions
   elements.resetSampleDataBtn.addEventListener('click', () => {
     state.transactions = getSampleTransactions(state.currentMonth);
+    localStorage.setItem(STORAGE_KEYS.INITIALIZED, 'true');
     saveTransactionsToStorage();
     renderCategoryFilterDropdown();
     renderApp();
@@ -1349,9 +1429,7 @@ function setupEventListeners() {
 
   elements.clearAllDataBtn.addEventListener('click', () => {
     if (confirm('Bạn có chắc chắn muốn xóa TOÀN BỘ dữ liệu giao dịch và ngân sách không?')) {
-      state.transactions = [];
-      state.budgets = {};
-      localStorage.clear();
+      deleteAllTransactions();
       renderCategoryFilterDropdown();
       renderApp();
       closeSettingsModal();
