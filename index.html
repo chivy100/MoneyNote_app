@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoneyNote – Sổ chi tiêu cá nhân</title>
+  <meta name="description" content="MoneyNote - Ứng dụng ghi chép thu chi cá nhân đơn giản, trực quan và chạy hoàn toàn trên trình duyệt.">
+  
+  <!-- Google Fonts: Be Vietnam Pro -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation (Desktop) -->
+    <aside class="sidebar" aria-label="Thanh điều hướng chính">
+      <div class="brand">
+        <div class="brand-icon">
+          <!-- Wallet SVG -->
+          <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h14a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2"></path>
+            <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path>
+          </svg>
+        </div>
+        <div class="brand-title">MoneyNote</div>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Menu chính">
+        <a href="#overview" class="nav-link active" data-view="overview">
+          <!-- Dashboard icon -->
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="9" rx="1"></rect>
+            <rect x="14" y="3" width="7" height="5" rx="1"></rect>
+            <rect x="14" y="12" width="7" height="9" rx="1"></rect>
+            <rect x="3" y="16" width="7" height="5" rx="1"></rect>
+          </svg>
+          Tổng quan
+        </a>
+        <a href="#transactions" class="nav-link" data-view="transactions">
+          <!-- List icon -->
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <circle cx="4" cy="6" r="1"></circle>
+            <circle cx="4" cy="12" r="1"></circle>
+            <circle cx="4" cy="18" r="1"></circle>
+          </svg>
+          Giao dịch
+        </a>
+        <a href="#stats" class="nav-link" data-view="stats">
+          <!-- Bar chart icon -->
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 3v18h18"></path>
+            <rect x="7" y="12" width="3" height="6"></rect>
+            <rect x="12" y="8" width="3" height="10"></rect>
+            <rect x="17" y="5" width="3" height="13"></rect>
+          </svg>
+          Thống kê
+        </a>
+        <a href="#settings" class="nav-link" data-view="settings">
+          <!-- Settings icon -->
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"></path>
+          </svg>
+          Cài đặt
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button type="button" class="theme-toggle-btn" id="themeToggleBtn" aria-label="Chuyển chế độ sáng/tối">
+          <span class="theme-toggle-label">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
+            </svg>
+            Chế độ tối
+          </span>
+          <span aria-hidden="true" class="toggle-switch-track">
+            <span class="toggle-switch-thumb"></span>
+          </span>
+        </button>
+        <div class="storage-hint">
+          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+          </svg>
+          Dữ liệu lưu trên trình duyệt này
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="main-wrapper">
+      
+      <!-- Top Bar / Header -->
+      <header class="top-bar">
+        <div class="month-navigator">
+          <button type="button" class="nav-month-btn" id="prevMonthBtn" aria-label="Tháng trước">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          
+          <div class="month-display">
+            <div class="greeting-text">Xin chào, Sinh viên</div>
+            <h1 class="current-month-heading" id="currentMonthHeading">Tháng 10/2026</h1>
+          </div>
+
+          <button type="button" class="nav-month-btn" id="nextMonthBtn" aria-label="Tháng sau">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <div class="top-bar-actions">
+          <div class="mobile-header-tools">
+            <button type="button" class="nav-month-btn" id="mobileThemeToggleBtn" aria-label="Chuyển chế độ sáng/tối">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
+              </svg>
+            </button>
+          </div>
+
+          <label class="search-box">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7"></circle>
+              <line x1="21" y1="21" x2="16.6" y2="16.6"></line>
+            </svg>
+            <span class="sr-only">Tìm kiếm theo ghi chú</span>
+            <input type="search" id="searchInput" placeholder="Tìm theo ghi chú…" autocomplete="off">
+          </label>
+
+          <button type="button" class="btn-primary" id="openAddModalBtn">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Thêm giao dịch
+          </button>
+        </div>
+      </header>
+
+      <!-- Overview Cards (F01) -->
+      <section class="overview-cards-grid" aria-label="Tổng quan tài chính trong tháng">
+        <!-- Tổng thu -->
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Tổng thu</span>
+            <span class="metric-badge income">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7"></line>
+                <polyline points="8 7 17 7 17 16"></polyline>
+              </svg>
+            </span>
+          </div>
+          <div class="metric-amount income" id="totalIncomeAmount">0 ₫</div>
+          <div class="metric-sub" id="incomeCountSub">0 khoản thu</div>
+        </div>
+
+        <!-- Tổng chi -->
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Tổng chi</span>
+            <span class="metric-badge expense">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="7" y1="7" x2="17" y2="17"></line>
+                <polyline points="17 8 17 17 8 17"></polyline>
+              </svg>
+            </span>
+          </div>
+          <div class="metric-amount expense" id="totalExpenseAmount">0 ₫</div>
+          <div class="metric-sub" id="expenseCountSub">0 khoản chi</div>
+        </div>
+
+        <!-- Số dư -->
+        <div class="metric-card balance">
+          <div class="metric-header">
+            <span class="metric-title">Số dư</span>
+            <span class="metric-badge">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h14a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2"></path>
+                <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path>
+              </svg>
+            </span>
+          </div>
+          <div class="metric-amount" id="balanceAmount">0 ₫</div>
+          <div class="metric-sub">Thu − Chi trong tháng</div>
+        </div>
+      </section>
+
+      <!-- Budget Section (F08) -->
+      <section class="budget-card" aria-label="Ngân sách chi tiêu tháng">
+        <div class="budget-header">
+          <div class="budget-title-wrap">
+            <h2 class="budget-title">Ngân sách tháng</h2>
+            <span class="budget-status-text" id="budgetStatusText">
+              Đã chi <strong id="budgetSpentText">0 ₫</strong> / <span id="budgetLimitText">0 ₫</span>
+            </span>
+          </div>
+          <button type="button" class="btn-secondary" id="openBudgetModalBtn">
+            <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
+            Đặt hạn mức
+          </button>
+        </div>
+
+        <div class="progress-track" role="progressbar" id="budgetProgressTrack" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Tiến độ chi tiêu">
+          <div class="progress-fill" id="budgetProgressFill" style="width: 0%;"></div>
+        </div>
+
+        <div class="budget-alert-banner" id="budgetAlertBanner">
+          <!-- Dynamic alert message injected here -->
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <span id="budgetAlertText">Đang tải trạng thái ngân sách...</span>
+        </div>
+      </section>
+
+      <!-- Lower Grid: Transactions Table & Category Breakdown -->
+      <div class="lower-grid">
+        
+        <!-- Transactions List (F03, F07) -->
+        <section class="transactions-card" aria-label="Danh sách giao dịch">
+          <div class="card-header-bar">
+            <h2 class="card-heading">Giao dịch gần đây</h2>
+            <button type="button" class="btn-secondary" id="exportCsvBtn" title="Xuất file CSV mở bằng Excel">
+              <!-- Download icon -->
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Xuất CSV
+            </button>
+          </div>
+
+          <div class="filter-bar">
+            <!-- Type Filter -->
+            <div class="segment-control" role="group" aria-label="Lọc theo loại giao dịch">
+              <button type="button" class="segment-btn active" data-filter-type="all">Tất cả</button>
+              <button type="button" class="segment-btn" data-filter-type="income">Thu</button>
+              <button type="button" class="segment-btn" data-filter-type="expense">Chi</button>
+            </div>
+
+            <!-- Category Filter -->
+            <label class="filter-category-label">
+              Danh mục
+              <select class="category-select" id="categoryFilterSelect" aria-label="Lọc theo danh mục">
+                <option value="all">Tất cả danh mục</option>
+                <!-- Categories populated by JS -->
+              </select>
+            </label>
+          </div>
+
+          <!-- Table Container -->
+          <div class="table-responsive">
+            <table class="tx-table" id="transactionsTable">
+              <thead>
+                <tr>
+                  <th scope="col">Ngày</th>
+                  <th scope="col">Danh mục</th>
+                  <th scope="col">Ghi chú</th>
+                  <th scope="col" class="text-right">Số tiền</th>
+                  <th scope="col" class="text-right"><span class="sr-only">Thao tác</span></th>
+                </tr>
+              </thead>
+              <tbody id="transactionsTableBody">
+                <!-- Transactions rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" id="txEmptyState" style="display: none;">
+            <svg aria-hidden="true" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <p>Không có giao dịch nào phù hợp với bộ lọc.</p>
+          </div>
+
+          <div style="display: flex; justify-content: center; padding-top: 4px;">
+            <button type="button" class="btn-secondary" id="toggleViewAllBtn" style="border: none; background: transparent; font-weight: 600; color: var(--color-primary);">
+              Xem tất cả giao dịch
+            </button>
+          </div>
+        </section>
+
+        <!-- Category Breakdown Chart (F09) -->
+        <section class="category-stats-card" aria-label="Chi tiêu theo danh mục">
+          <div class="category-stats-header">
+            <h2 class="card-heading">Chi theo danh mục</h2>
+            <div class="category-stats-sub" id="categoryTotalExpenseSub">Tổng chi 0 ₫</div>
+          </div>
+
+          <div class="category-list" id="categoryListContainer">
+            <!-- Categories rendered by JS -->
+          </div>
+
+          <div class="empty-state" id="categoryEmptyState" style="display: none; padding: 24px 10px;">
+            <p>Chưa có khoản chi nào trong tháng này.</p>
+          </div>
+        </section>
+      </div>
+
+    </main>
+
+    <!-- Mobile Floating Action Button (FAB) (F10) -->
+    <button type="button" class="mobile-fab" id="mobileFabBtn" aria-label="Thêm giao dịch mới">
+      <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+    </button>
+
+    <!-- Mobile Bottom Navigation (F10) -->
+    <nav class="mobile-bottom-nav" aria-label="Điều hướng di động">
+      <a href="#overview" class="bottom-nav-item active" data-view="overview">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="9" rx="1"></rect>
+          <rect x="14" y="3" width="7" height="5" rx="1"></rect>
+          <rect x="14" y="12" width="7" height="9" rx="1"></rect>
+          <rect x="3" y="16" width="7" height="5" rx="1"></rect>
+        </svg>
+        Tổng quan
+      </a>
+      <a href="#transactions" class="bottom-nav-item" data-view="transactions">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="8" y1="6" x2="21" y2="6"></line>
+          <line x1="8" y1="12" x2="21" y2="12"></line>
+          <line x1="8" y1="18" x2="21" y2="18"></line>
+          <circle cx="4" cy="6" r="1"></circle>
+          <circle cx="4" cy="12" r="1"></circle>
+          <circle cx="4" cy="18" r="1"></circle>
+        </svg>
+        Giao dịch
+      </a>
+      <a href="#stats" class="bottom-nav-item" data-view="stats">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 3v18h18"></path>
+          <rect x="7" y="12" width="3" height="6"></rect>
+          <rect x="12" y="8" width="3" height="10"></rect>
+          <rect x="17" y="5" width="3" height="13"></rect>
+        </svg>
+        Thống kê
+      </a>
+      <a href="#settings" class="bottom-nav-item" data-view="settings">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"></path>
+        </svg>
+        Cài đặt
+      </a>
+    </nav>
+
+  </div>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Modal 1: Thêm / Sửa Giao Dịch (F02, F04) -->
+  <div class="modal-overlay" id="txModalOverlay" role="dialog" aria-modal="true" aria-labelledby="txModalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 class="modal-title" id="txModalTitle">Thêm giao dịch</h2>
+        <button type="button" class="modal-close-btn" id="closeTxModalBtn" aria-label="Đóng hộp thoại">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <form id="txForm" novalidate>
+        <input type="hidden" id="txFormId" value="">
+
+        <!-- Loại giao dịch: Thu / Chi -->
+        <div class="form-group">
+          <div class="type-switch-group" role="group" aria-label="Chọn loại giao dịch">
+            <button type="button" class="type-switch-btn" id="typeIncomeBtn" data-type="income">Khoản thu</button>
+            <button type="button" class="type-switch-btn active expense" id="typeExpenseBtn" data-type="expense">Khoản chi</button>
+          </div>
+        </div>
+
+        <!-- Số tiền -->
+        <div class="form-group">
+          <label for="formAmountInput" class="form-label">
+            Số tiền <span class="form-required">*</span>
+          </label>
+          <div class="amount-input-wrap" id="amountInputWrap">
+            <input type="text" id="formAmountInput" class="amount-input-field" placeholder="0" inputmode="numeric" required>
+            <span class="amount-currency-symbol">₫</span>
+          </div>
+          <div class="form-error-msg" id="amountErrorMsg">
+            <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span id="amountErrorText">Số tiền phải lớn hơn 0</span>
+          </div>
+        </div>
+
+        <!-- Danh mục dạng lưới -->
+        <div class="form-group">
+          <span class="form-label">
+            Danh mục <span class="form-required">*</span>
+          </span>
+          <div class="category-grid" id="categoryPickerGrid" role="radiogroup" aria-label="Chọn danh mục">
+            <!-- Category chips injected by JS -->
+          </div>
+          <div class="form-error-msg" id="categoryErrorMsg">
+            <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>Vui lòng chọn một danh mục</span>
+          </div>
+        </div>
+
+        <!-- Ngày & Hình thức thanh toán -->
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="formDateInput" class="form-label">
+              Ngày <span class="form-required">*</span>
+            </label>
+            <input type="date" id="formDateInput" class="form-control-input" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="formPaymentSelect" class="form-label">Hình thức</label>
+            <select id="formPaymentSelect" class="form-control-select">
+              <option value="Tiền mặt">Tiền mặt</option>
+              <option value="Chuyển khoản">Chuyển khoản</option>
+              <option value="Ví điện tử">Ví điện tử</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Ghi chú -->
+        <div class="form-group">
+          <label for="formNoteInput" class="form-label">Ghi chú</label>
+          <textarea id="formNoteInput" class="form-control-textarea" rows="3" maxlength="100" placeholder="Ví dụ: Ăn sáng, cà phê với nhóm"></textarea>
+          <div class="char-counter" id="formNoteCounter">0/100 ký tự</div>
+        </div>
+
+        <!-- Nút thao tác -->
+        <div class="modal-actions-grid">
+          <button type="button" class="btn-cancel" id="cancelTxModalBtn">Hủy</button>
+          <button type="submit" class="btn-submit" id="submitTxBtn">Lưu giao dịch</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Xác Nhận Xóa Giao Dịch (F05) -->
+  <div class="modal-overlay" id="deleteModalOverlay" role="alertdialog" aria-modal="true" aria-labelledby="deleteModalTitle" aria-describedby="deleteModalDesc">
+    <div class="modal-dialog delete-dialog">
+      <div class="delete-dialog-icon">
+        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+          <path d="M10 11v6"></path>
+          <path d="M14 11v6"></path>
+          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+        </svg>
+      </div>
+
+      <div>
+        <h2 class="modal-title" id="deleteModalTitle" style="margin-bottom: 6px;">Xóa giao dịch này?</h2>
+        <p id="deleteModalDesc" style="color: var(--text-secondary); font-size: 15px;">
+          Giao dịch sẽ bị xóa vĩnh viễn và không thể khôi phục.
+        </p>
+      </div>
+
+      <!-- Preview Transaction Info -->
+      <div class="delete-preview-box" id="deletePreviewBox">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <span style="font-size: 15px; font-weight: 600;" id="deletePreviewNote">Đang tải...</span>
+          <span style="font-size: 13px; color: var(--text-muted);" id="deletePreviewMeta">Đi lại · 27/10/2026</span>
+        </div>
+        <span style="font-size: 16px; font-weight: 700; color: var(--color-expense);" id="deletePreviewAmount">− 80.000 ₫</span>
+      </div>
+
+      <div class="modal-actions-grid">
+        <button type="button" class="btn-cancel" id="cancelDeleteBtn">Không, giữ lại</button>
+        <button type="button" class="btn-danger-confirm" id="confirmDeleteBtn">Xóa</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Đặt Hạn Mức Ngân Sách (F08) -->
+  <div class="modal-overlay" id="budgetModalOverlay" role="dialog" aria-modal="true" aria-labelledby="budgetModalTitle">
+    <div class="modal-dialog delete-dialog">
+      <div class="modal-header">
+        <h2 class="modal-title" id="budgetModalTitle">Đặt ngân sách tháng</h2>
+        <button type="button" class="modal-close-btn" id="closeBudgetModalBtn" aria-label="Đóng">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <form id="budgetForm" novalidate>
+        <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">
+          Nhập hạn mức chi tiêu bạn muốn kiểm soát cho <strong id="budgetModalMonthText">tháng này</strong>:
+        </p>
+
+        <div class="form-group">
+          <div class="amount-input-wrap" id="budgetInputWrap">
+            <input type="text" id="budgetAmountInput" class="amount-input-field" placeholder="6.000.000" inputmode="numeric" required>
+            <span class="amount-currency-symbol">₫</span>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+          <button type="button" class="btn-secondary budget-preset-btn" data-preset="3000000">3.000.000 ₫</button>
+          <button type="button" class="btn-secondary budget-preset-btn" data-preset="5000000">5.000.000 ₫</button>
+          <button type="button" class="btn-secondary budget-preset-btn" data-preset="6000000">6.000.000 ₫</button>
+          <button type="button" class="btn-secondary budget-preset-btn" data-preset="10000000">10.000.000 ₫</button>
+        </div>
+
+        <div class="modal-actions-grid" style="margin-top: 20px;">
+          <button type="button" class="btn-cancel" id="cancelBudgetBtn">Hủy</button>
+          <button type="submit" class="btn-submit">Lưu hạn mức</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 4: Cài Đặt Ứng Dụng (Settings) -->
+  <div class="modal-overlay" id="settingsModalOverlay" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 class="modal-title" id="settingsModalTitle">Cài đặt ứng dụng</h2>
+        <button type="button" class="modal-close-btn" id="closeSettingsModalBtn" aria-label="Đóng">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 18px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--bg-subtle); border-radius: 12px; border: 1px solid var(--border-color);">
+          <div>
+            <div style="font-weight: 600;">Chế độ giao diện</div>
+            <div style="font-size: 13px; color: var(--text-muted);">Sáng hoặc Tối</div>
+          </div>
+          <button type="button" class="btn-secondary" id="settingsThemeToggleBtn">Đổi giao diện</button>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--bg-subtle); border-radius: 12px; border: 1px solid var(--border-color);">
+          <div>
+            <div style="font-weight: 600;">Dữ liệu mẫu</div>
+            <div style="font-size: 13px; color: var(--text-muted);">Khôi phục 10+ giao dịch mẫu ban đầu</div>
+          </div>
+          <button type="button" class="btn-secondary" id="resetSampleDataBtn">Khôi phục</button>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--bg-subtle); border-radius: 12px; border: 1px solid var(--border-color);">
+          <div>
+            <div style="font-weight: 600; color: var(--color-expense);">Xóa toàn bộ dữ liệu</div>
+            <div style="font-size: 13px; color: var(--text-muted);">Xóa tất cả giao dịch và cài đặt trên máy này</div>
+          </div>
+          <button type="button" class="btn-secondary" id="clearAllDataBtn" style="color: var(--color-expense); border-color: var(--color-expense);">Xóa tất cả</button>
+        </div>
+
+        <div style="font-size: 13px; color: var(--text-muted); line-height: 1.6; padding-top: 8px;">
+          <strong>MoneyNote v1.0</strong><br>
+          Ứng dụng sổ chi tiêu cá nhân bằng HTML5, CSS3 và ES6 thuần.<br>
+          Dữ liệu được lưu trữ an toàn trong LocalStorage của trình duyệt.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- Application Logic -->
+  <script src="js/app.js"></script>
+</body>
+</html>
+
