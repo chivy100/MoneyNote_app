@@ -1229,6 +1229,40 @@ function changeMonth(offset) {
 
 // --- Theme Toggle (F11) ---
 
+function updateThemeUI(theme) {
+  const isDark = theme === 'dark';
+  const textEl = document.getElementById('themeToggleText');
+  const iconWrap = document.getElementById('themeToggleIconWrap');
+  const toggleBtn = elements.themeToggleBtn;
+  const mobileBtn = elements.mobileThemeToggleBtn;
+  const settingsBtn = elements.settingsThemeToggleBtn;
+  const settingsStatus = document.getElementById('settingsThemeStatusText');
+
+  const sunSvg = `<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+  const moonSvg = `<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>`;
+
+  if (textEl) {
+    textEl.textContent = isDark ? 'Chế độ tối' : 'Chế độ sáng';
+  }
+  if (iconWrap) {
+    iconWrap.innerHTML = isDark ? moonSvg : sunSvg;
+  }
+  if (toggleBtn) {
+    toggleBtn.setAttribute('aria-label', isDark ? 'Đang ở chế độ tối. Bấm để chuyển sang chế độ sáng' : 'Đang ở chế độ sáng. Bấm để chuyển sang chế độ tối');
+  }
+  if (mobileBtn) {
+    mobileBtn.innerHTML = isDark ? moonSvg : sunSvg;
+    mobileBtn.setAttribute('aria-label', isDark ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối');
+    mobileBtn.title = isDark ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối';
+  }
+  if (settingsBtn) {
+    settingsBtn.textContent = isDark ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối';
+  }
+  if (settingsStatus) {
+    settingsStatus.textContent = isDark ? 'Đang dùng chế độ tối' : 'Đang dùng chế độ sáng';
+  }
+}
+
 function setTheme(theme) {
   state.theme = theme;
   if (theme === 'dark') {
@@ -1236,13 +1270,14 @@ function setTheme(theme) {
   } else {
     document.body.classList.remove('dark');
   }
+  updateThemeUI(theme);
   saveThemeToStorage();
 }
 
 function toggleTheme() {
   const next = state.theme === 'dark' ? 'light' : 'dark';
   setTheme(next);
-  showToast(`Đã chuyển sang giao diện ${next === 'dark' ? 'Tối' : 'Sáng'}`);
+  showToast(`Đã chuyển sang ${next === 'dark' ? 'chế độ tối' : 'chế độ sáng'}`);
 }
 
 // --- Export to CSV File (F12) ---
