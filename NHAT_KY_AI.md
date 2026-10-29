@@ -97,13 +97,24 @@ Trong quá trình phát triển và kiểm thử độc lập, nhóm sinh viên 
 | **F07** | **Lọc và tìm kiếm** | Khuyến khích | **Đã hoàn thành 100%** | Lọc theo tháng (bộ chuyển tháng `<` `>`), lọc theo loại (Tất cả / Thu / Chi), lọc theo dropdown danh mục, tìm kiếm realtime theo ghi chú. |
 | **F08** | **Ngân sách tháng** | Khuyến khích | **Đã hoàn thành 100%** | Đặt hạn mức chi tiêu cho từng tháng (có gợi ý nhanh 3tr, 5tr, 6tr, 10tr). Thanh tiến độ và cảnh báo thông minh 3 mức (An toàn, Cảnh báo 80%, Vượt hạn mức >100%). |
 | **F09** | **Thống kê theo danh mục** | Khuyến khích | **Đã hoàn thành 100%** | Tự động tính tổng chi và tỷ lệ % từng danh mục, hiển thị danh sách trực quan với thanh tiến độ màu sắc tương ứng. |
-| **F10** | **Giao diện điện thoại** | Khuyến khích | **Đã hoàn thành 100%** | Responsive hoàn hảo trên mobile (390px - 430px). Có nút FAB thêm nhanh, thanh điều hướng đáy (Bottom Nav) 4 mục. |
+| **F10** | **Giao diện điện thoại** | Khuyến khích | **Đã hoàn thành 100%** | Responsive tối ưu trên mọi kích thước màn hình từ iPhone SE (375px) đến iPhone 14 Pro Max / Android (390px - 430px). Chuyển bảng giao dịch sang dạng thẻ (Card list) hiển thị nút Sửa/Xóa to rõ, có nút FAB thêm nhanh và thanh điều hướng đáy (Bottom Nav) 4 mục. |
 | **F11** | **Chế độ tối (Dark Mode)** | Nâng cao | **Đã hoàn thành 100%** | Nút chuyển sáng/tối trên Sidebar desktop, Header mobile và màn hình Cài đặt. Tự động lưu trạng thái vào LocalStorage. Bảng màu tối dịu mắt, tương phản cao. |
 | **F12** | **Xuất file CSV** | Nâng cao | **Đã hoàn thành 100%** | Nút "Xuất CSV" tải về file giao dịch theo tháng lọc, có chèn UTF-8 BOM chuẩn để mở trực tiếp bằng Microsoft Excel không lỗi font tiếng Việt. |
 
 ---
 
-## 6. Kết luận & Bài học kinh nghiệm
+## 6. Thông tin sản phẩm nộp bài
+- **Repository GitHub:** [https://github.com/chivy100/MoneyNote_app](https://github.com/chivy100/MoneyNote_app)
+- **Bản Live Demo (GitHub Pages):** [https://chivy100.github.io/MoneyNote_app/](https://chivy100.github.io/MoneyNote_app/)
+- **Cấu trúc mã nguồn:**
+  - `index.html`: Cấu trúc HTML5 ngữ nghĩa, chứa đầy đủ các phân khu Desktop, Mobile Bottom Nav, Modal Thêm/Sửa/Xóa/Ngân sách/Cài đặt.
+  - `css/style.css`: Hệ thống CSS3 Design Tokens, Flexbox, CSS Grid, Chế độ Tối (Dark mode), Media Queries responsive 360px - 1440px.
+  - `js/app.js`: Logic ES6+ thuần, kiến trúc module, xử lý State tập trung, CRUD, Validation, LocalStorage, Timezone Asia/Ho_Chi_Minh, CSV Export UTF-8 BOM.
+  - `NHAT_KY_AI.md`: Báo cáo chi tiết quá trình làm việc với AI, giả định nghiệp vụ, danh sách prompt và 12 lỗi phát hiện - khắc phục.
+
+---
+
+## 7. Kết luận & Bài học kinh nghiệm
 - **Hiệu quả của AI:** AI giúp sinh nhanh khung giao diện và cấu trúc code mẫu ban đầu, tiết kiệm 70% thời gian gõ boilerplate code.
-- **Vai trò then chốt của con người:** Không thể sao chép mù quáng code AI sinh ra. Sinh viên phải có kiến thức nền tảng vững về DOM, CSS Layout và các trường hợp biên (XSS, UTF-8 BOM cho Excel, edge cases số âm/tràn tháng/rỗng dữ liệu) để kiểm thử, phát hiện lỗi và tối ưu hóa sản phẩm đạt chất lượng cao nhất.
+- **Vai trò then chốt của con người:** Không thể sao chép mù quáng code AI sinh ra. Sinh viên phải có kiến thức nền tảng vững về DOM, CSS Layout và các trường hợp biên (XSS, UTF-8 BOM cho Excel, Timezone UTC+7, edge cases số âm/tràn tháng/xóa sạch dữ liệu) để kiểm thử, phát hiện lỗi và tối ưu hóa sản phẩm đạt chất lượng cao nhất.
 
