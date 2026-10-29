@@ -265,8 +265,8 @@
             </label>
           </div>
 
-          <!-- Table Container -->
-          <div class="table-responsive">
+          <!-- Desktop Table Container (visible >= 769px) -->
+          <div class="desktop-tx-table table-responsive">
             <table class="tx-table" id="transactionsTable">
               <thead>
                 <tr>
@@ -281,6 +281,11 @@
                 <!-- Transactions rendered by JS -->
               </tbody>
             </table>
+          </div>
+
+          <!-- Mobile Card List Container (visible <= 768px) -->
+          <div class="mobile-tx-list" id="mobileTxList">
+            <!-- Mobile cards rendered by JS -->
           </div>
 
           <!-- Empty State -->

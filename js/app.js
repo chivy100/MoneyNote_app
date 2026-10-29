@@ -456,6 +456,7 @@ function initDOMElements() {
     searchInput: document.getElementById('searchInput'),
     categoryFilterSelect: document.getElementById('categoryFilterSelect'),
     transactionsTableBody: document.getElementById('transactionsTableBody'),
+    mobileTxList: document.getElementById('mobileTxList'),
     txEmptyState: document.getElementById('txEmptyState'),
     toggleViewAllBtn: document.getElementById('toggleViewAllBtn'),
     segmentBtns: document.querySelectorAll('.segment-btn'),
@@ -720,9 +721,11 @@ function renderBudgetSection() {
 function renderTransactionsTable() {
   const list = getFilteredTransactions();
   const tbody = elements.transactionsTableBody;
+  const mobileList = elements.mobileTxList;
   if (!tbody) return;
 
   tbody.innerHTML = '';
+  if (mobileList) mobileList.innerHTML = '';
 
   if (list.length === 0) {
     if (elements.txEmptyState) elements.txEmptyState.style.display = 'flex';
@@ -737,13 +740,14 @@ function renderTransactionsTable() {
   const displayItems = list.slice(0, displayLimit);
 
   displayItems.forEach(tx => {
-    const tr = document.createElement('tr');
-    tr.dataset.id = tx.id;
-
     const catMeta = getCategoryMeta(tx.category);
     const isIncome = tx.type === 'income';
     const amountSign = isIncome ? '+ ' : '− ';
     const amountClass = isIncome ? 'income' : 'expense';
+
+    // 1. Desktop Table Row
+    const tr = document.createElement('tr');
+    tr.dataset.id = tx.id;
 
     tr.innerHTML = `
       <td class="tx-date-cell">${formatDateVN(tx.date)}</td>
@@ -780,6 +784,58 @@ function renderTransactionsTable() {
     `;
 
     tbody.appendChild(tr);
+
+    // 2. Mobile Responsive Card
+    if (mobileList) {
+      const card = document.createElement('div');
+      card.className = 'mobile-tx-card';
+      card.dataset.id = tx.id;
+      card.innerHTML = `
+        <div class="mobile-tx-card-main" data-action="edit" data-id="${tx.id}" title="Chạm để sửa giao dịch">
+          <div class="mobile-tx-avatar" style="background-color: ${catMeta.chip}; color: ${catMeta.fg};">
+            ${escapeHTML(catMeta.ini)}
+          </div>
+          <div class="mobile-tx-info">
+            <div class="mobile-tx-top-row">
+              <span class="mobile-tx-category">${escapeHTML(tx.category)}</span>
+              <span class="mobile-tx-amount ${amountClass}">${amountSign}${formatVND(tx.amount)}</span>
+            </div>
+            <div class="mobile-tx-note" title="${escapeHTML(tx.note || '')}">${escapeHTML(tx.note || 'Không có ghi chú')}</div>
+            <div class="mobile-tx-meta-row">
+              <span class="mobile-tx-date">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                ${formatDateVN(tx.date)}
+              </span>
+              <span class="mobile-tx-payment">${escapeHTML(tx.payment || 'Tiền mặt')}</span>
+            </div>
+          </div>
+        </div>
+        <div class="mobile-tx-card-actions">
+          <button type="button" class="btn-mobile-action edit" aria-label="Sửa giao dịch" title="Sửa giao dịch" data-action="edit" data-id="${tx.id}">
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+            </svg>
+            <span>Sửa</span>
+          </button>
+          <button type="button" class="btn-mobile-action delete" aria-label="Xóa giao dịch" title="Xóa giao dịch" data-action="delete" data-id="${tx.id}">
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+              <path d="M10 11v6"></path>
+              <path d="M14 11v6"></path>
+              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+            </svg>
+            <span>Xóa</span>
+          </button>
+        </div>
+      `;
+      mobileList.appendChild(card);
+    }
   });
 
   // Toggle "Xem tất cả" button text and visibility
@@ -1313,19 +1369,31 @@ function setupEventListeners() {
   // 8. Delete Confirm
   elements.confirmDeleteBtn.addEventListener('click', handleConfirmDelete);
 
-  // 9. Table Row Action Delegations (Edit / Delete)
-  elements.transactionsTableBody.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-action]');
-    if (!btn) return;
-    const action = btn.dataset.action;
-    const txId = btn.dataset.id;
-
-    if (action === 'edit') {
-      openTransactionModal(txId);
-    } else if (action === 'delete') {
-      openDeleteModal(txId);
+  // 9. Table & Mobile Card Action Delegations (Edit / Delete / Row Click)
+  const handleTxActionClick = (e) => {
+    const actionBtn = e.target.closest('[data-action]');
+    if (actionBtn) {
+      const action = actionBtn.dataset.action;
+      const txId = actionBtn.dataset.id;
+      if (action === 'edit') {
+        openTransactionModal(txId);
+      } else if (action === 'delete') {
+        openDeleteModal(txId);
+      }
+      return;
     }
-  });
+
+    // Row or card click to edit (F04)
+    const rowOrCard = e.target.closest('tr[data-id], .mobile-tx-card[data-id]');
+    if (rowOrCard && rowOrCard.dataset.id) {
+      openTransactionModal(rowOrCard.dataset.id);
+    }
+  };
+
+  elements.transactionsTableBody.addEventListener('click', handleTxActionClick);
+  if (elements.mobileTxList) {
+    elements.mobileTxList.addEventListener('click', handleTxActionClick);
+  }
 
   // 10. Filter Segment Buttons (All / Income / Expense)
   elements.segmentBtns.forEach(btn => {
